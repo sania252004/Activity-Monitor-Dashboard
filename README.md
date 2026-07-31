@@ -5,21 +5,6 @@ clicks, scroll depth, and on-demand screenshots) and stores it in a database
 via a small backend API. Built for demonstrating browser-extension + agent +
 data-pipeline skills.
 
-## Architecture
-
-```
-┌─────────────────────┐        ┌──────────────────────┐        ┌─────────────┐
-│  content.js          │  msg   │  background.js        │  HTTP  │  server.js   │
-│  (runs on every page)│ ─────► │  (service worker)      │ ─────► │  Express API │
-│  clicks / scroll     │        │  tab lifecycle, batching│        │  + SQLite    │
-└─────────────────────┘        └──────────────────────┘        └─────────────┘
-                                          ▲
-                                          │
-                                   popup.html/js
-                                (on/off toggle, stats,
-                                 manual screenshot)
-```
-
 - **content.js** — injected into every page. Listens for clicks and scroll,
   and reports *structural* metadata only (tag name, id/class, short visible
   text, scroll %). It never reads input field values, so passwords and typed
@@ -72,18 +57,6 @@ watch events arrive in real time.
 | `screenshot`       | url, PNG image (on demand only)              |
 
 No password fields, form input values, or keystrokes are ever captured.
-
-## Extending this for the internship
-
-Ideas worth mentioning if asked to extend it:
-- Swap SQLite for Postgres (schema is already relational/normalized — same
-  `INSERT`/`SELECT` shapes, just change the driver in `server.js`).
-- Send screenshots to a vision model (e.g. the Claude API) to classify page
-  content or flag anomalies, rather than just storing raw images.
-- Add authentication on the API (an API key or JWT) before this touches any
-  real user's data, plus an explicit consent/onboarding screen in the
-  extension — important for anything beyond a personal/local demo.
-- Add a `time-on-task` aggregation view (e.g. total time per domain per day).
 
 ## A note on scope
 
