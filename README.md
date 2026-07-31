@@ -62,9 +62,4 @@ No password fields, form input values, or keystrokes are ever captured.
 
 This is built as a **personal/local monitoring tool** — the user installs it
 on their own browser and can see exactly what's tracked (visible extension
-icon, working on/off toggle, no hidden background capture). If this is ever
-adapted for monitoring *other people's* devices (e.g. an employee-monitoring
-product), it should add explicit disclosure/consent flows and admin controls
-before collecting any data — that's usually a strong signal to interviewers
-that you're thinking about the ethics and legality of monitoring tools, not
-just the mechanics.
+icon, working on/off toggle, no hidden background capture).
