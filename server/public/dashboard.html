@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Activity Monitor Dashboard</title>
+<style>
+  body { font-family: -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; }
+  .stats { display: flex; gap: 12px; margin-bottom: 20px; }
+  .card { background: #1e293b; border-radius: 10px; padding: 14px 18px; min-width: 120px; }
+  .card b { font-size: 22px; display:block; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #334155; }
+  th { color: #94a3b8; font-weight: 500; }
+  .tag { padding: 2px 8px; border-radius: 12px; font-size: 11px; background: #334155; }
+  .tag.page_visit { background: #1d4ed8; }
+  .tag.click { background: #7c3aed; }
+  .tag.scroll { background: #059669; }
+  .tag.tab_active_time { background: #d97706; }
+  .tag.screenshot { background: #db2777; }
+</style>
+</head>
+<body>
+  <h1>📊 Activity Monitor — Live Log</h1>
+  <div class="stats" id="stats"></div>
+  <table>
+    <thead><tr><th>Type</th><th>URL</th><th>Detail</th><th>Time</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+async function load() {
+  const stats = await fetch('/api/stats').then(r => r.json());
+  document.getElementById('stats').innerHTML = `
+    <div class="card">Total events<b>${stats.totalEvents}</b></div>
+    <div class="card">Sessions<b>${stats.totalSessions}</b></div>
+    ${stats.byType.map(t => `<div class="card">${t.type}<b>${t.count}</b></div>`).join('')}
+  `;
+
+  const rows = await fetch('/api/activities?limit=200').then(r => r.json());
+  document.getElementById('rows').innerHTML = rows.map(r => `
+    <tr>
+      <td><span class="tag ${r.type}">${r.type}</span></td>
+      <td>${(r.url || '').slice(0, 60)}</td>
+      <td>${r.duration_ms ? Math.round(r.duration_ms/1000) + 's' : (r.meta || '')}</td>
+      <td>${r.created_at}</td>
+    </tr>
+  `).join('');
+}
+load();
+setInterval(load, 3000);
+</script>
+</body>
+</html>
